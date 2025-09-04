@@ -1,0 +1,39 @@
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        boolean[][] rows = new boolean[9][9]; // rows[i][d] = digit d seen in row i?
+        boolean[][] cols = new boolean[9][9]; // cols[j][d] = digit d seen in col j?
+        boolean[][] boxes = new boolean[9][9]; // boxes[b][d] = digit d seen in 3x3 box b?
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                char c = board[i][j];
+                if (c == '.') continue; // skip empty cells
+
+                int d = c - '1';                 // map '1'..'9' -> 0..8
+                int b = (i / 3) * 3 + (j / 3);   // 3x3 box index: 0..8
+
+                // if digit already seen in row/col/box -> invalid
+                if (rows[i][d] || cols[j][d] || boxes[b][d]) return false;
+
+                rows[i][d] = cols[j][d] = boxes[b][d] = true;
+            }
+        }
+        return true; // no rule violations found
+    }
+}
+
+/*
+Explanation (simple):
+- We must ensure each filled digit 1..9 appears at most once in:
+  1) its row, 2) its column, and 3) its 3x3 sub-box.
+- Use three 9x9 boolean tables:
+  - rows[i][d] marks digit d already seen in row i,
+  - cols[j][d] marks digit d already seen in column j,
+  - boxes[b][d] marks digit d already seen in 3x3 box b (b = (i/3)*3 + (j/3)).
+- Scan all 81 cells. For a non-dot cell:
+  - Compute d (0..8) and box index b.
+  - If the digit was seen before in its row/col/box, return false.
+  - Otherwise mark it as seen.
+- If we finish scanning without conflicts, the board is valid.
+- Time: O(81) ~ O(1). Space: O(1) fixed-size boolean arrays.
+*/
